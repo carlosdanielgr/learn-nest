@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { Cars } from './cars.interface';
 import { CarsService } from './cars.service';
+import { CreateCardDto } from './dto/create-card.dto';
 
 @Controller('cars')
 export class CarsController {
@@ -17,7 +18,7 @@ export class CarsController {
 
   @Get()
   getAllCars(): Cars[] {
-    return this.getAllCars();
+    return this.carsService.getAllCars();
   }
 
   @Get(':id')
@@ -27,8 +28,8 @@ export class CarsController {
   }
 
   @Post()
-  createCar(@Body() body: any): any {
-    return body;
+  createCar(@Body() createCarDto: CreateCardDto): any {
+    return createCarDto;
   }
 
   @Patch(':id')
