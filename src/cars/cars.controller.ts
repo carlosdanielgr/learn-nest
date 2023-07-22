@@ -29,7 +29,7 @@ export class CarsController {
 
   @Post()
   createCar(@Body() createCarDto: CreateCardDto): any {
-    return createCarDto;
+    return this.carsService.createCard(createCarDto);
   }
 
   @Patch(':id')
