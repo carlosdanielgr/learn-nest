@@ -55,4 +55,12 @@ export class CarsService {
     this.CARS[indexCard] = { ...this.CARS[indexCard], ...updateCardDto };
     return this.CARS[indexCard];
   }
+
+  removeCard(id: number): Cars[] {
+    const indexCard = this.CARS.findIndex((cars) => cars.id === id);
+    if (indexCard === -1)
+      throw new NotFoundException(`Id:${id} card not found`);
+    this.CARS.splice(indexCard, 1);
+    return this.CARS;
+  }
 }
