@@ -1,6 +1,10 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class CreateCardDto {
+export class UpdateCardDto {
+  @IsOptional()
+  readonly id: number;
+
+  @IsOptional()
   @IsString()
   readonly name: string;
 

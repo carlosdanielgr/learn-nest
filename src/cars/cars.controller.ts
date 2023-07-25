@@ -11,6 +11,7 @@ import {
 import { Cars } from './cars.interface';
 import { CarsService } from './cars.service';
 import { CreateCardDto } from './dto/create-card.dto';
+import { UpdateCardDto } from './dto/update-card.dto';
 
 @Controller('cars')
 export class CarsController {
@@ -28,16 +29,16 @@ export class CarsController {
   }
 
   @Post()
-  createCar(@Body() createCarDto: CreateCardDto): any {
+  createCar(@Body() createCarDto: CreateCardDto): Cars {
     return this.carsService.createCard(createCarDto);
   }
 
   @Patch(':id')
-  updateCar(@Param('id', ParseIntPipe) id: number, @Body() body: any): any {
-    return {
-      body: body,
-      id: id,
-    };
+  updateCar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateCardDto,
+  ): Cars {
+    return this.carsService.updateCard(id, body);
   }
 
   @Delete(':id')
