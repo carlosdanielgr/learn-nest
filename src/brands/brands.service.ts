@@ -1,25 +1,51 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBrandDto, UpdateBrandDto } from './dto';
 
 @Injectable()
 export class BrandsService {
+  private readonly _BRANDS = [
+    {
+      id: 1,
+      name: 'Toyota',
+      createAt: new Date(),
+    },
+  ];
+
   create(createBrandDto: CreateBrandDto) {
-    return 'This action adds a new brand';
+    const brand = {
+      id: this._BRANDS.at(-1).id + 1,
+      name: createBrandDto.name,
+      createAt: new Date(),
+    };
+    this._BRANDS.push(brand);
+
+    return brand;
   }
 
   findAll() {
-    return `This action returns all brands`;
+    return this._BRANDS;
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} brand`;
+    const brand = this._BRANDS.find((brands) => brands.id === id);
+    if (!brand) throw new NotFoundException(`Brand with id:${id} not found`);
+    return brand;
   }
 
   update(id: number, updateBrandDto: UpdateBrandDto) {
-    return `This action updates a #${id} brand`;
+    const indexbrand = this._BRANDS.findIndex((brands) => brands.id === id);
+    this._BRANDS[indexbrand] = {
+      ...this._BRANDS[indexbrand],
+      ...updateBrandDto,
+    };
+    return this._BRANDS[indexbrand];
   }
 
   remove(id: number) {
-    return `This action removes a #${id} brand`;
+    const indexBrand = this._BRANDS.findIndex((brands) => brands.id === id);
+    if (indexBrand === -1)
+      throw new NotFoundException(`Id:${id} brand not found`);
+    this._BRANDS.splice(indexBrand, 1);
+    return this._BRANDS;
   }
 }
