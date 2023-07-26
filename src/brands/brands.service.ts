@@ -34,6 +34,8 @@ export class BrandsService {
 
   update(id: number, updateBrandDto: UpdateBrandDto) {
     const indexbrand = this._BRANDS.findIndex((brands) => brands.id === id);
+    if (indexbrand === -1)
+      throw new NotFoundException(`Id:${id} brand not found`);
     this._BRANDS[indexbrand] = {
       ...this._BRANDS[indexbrand],
       ...updateBrandDto,
