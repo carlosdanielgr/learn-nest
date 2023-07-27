@@ -9,6 +9,7 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
@@ -42,7 +43,7 @@ export class PokemonController {
   }
 
   @Delete(':param')
-  remove(@Param('param') param: string) {
-    return this.pokemonService.remove(param);
+  remove(@Param('param', ParseMongoIdPipe) id: string) {
+    return this.pokemonService.remove(id);
   }
 }

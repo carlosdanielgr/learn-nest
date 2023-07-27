@@ -69,9 +69,8 @@ export class PokemonService {
     }
   }
 
-  async remove(param: string) {
-    const pokemon = await this.findOne(param);
-    await pokemon.deleteOne();
-    return `This action removes a #${param} pokemon`;
+  async remove(id: string) {
+    await this.pokemonModel.findByIdAndDelete(id);
+    return `This action removes a #${id} pokemon`;
   }
 }
