@@ -3,11 +3,12 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { NotFoundException } from '@nestjs/common/exceptions';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { Pokemon } from './entities/pokemon.entity';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
-import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class PokemonService {
@@ -36,8 +37,20 @@ export class PokemonService {
     return `This action returns all pokemon`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pokemon`;
+  async findOne(param: string) {
+    let pokemon!: Pokemon;
+    if (!isNaN(+param))
+      pokemon = await this.pokemonModel.findOne({ numPokemon: param });
+    else if (isValidObjectId(param))
+      pokemon = await this.pokemonModel.findById(param);
+    if (!pokemon) {
+      const pokemonByName = await this.pokemonModel.findOne({
+        name: param.toLocaleLowerCase().trim(),
+      });
+      if (pokemonByName) pokemon = pokemonByName;
+      else throw new NotFoundException(`Pokemon with ${param} not found`);
+    }
+    return pokemon;
   }
 
   update(id: number, updatePokemonDto: UpdatePokemonDto) {
