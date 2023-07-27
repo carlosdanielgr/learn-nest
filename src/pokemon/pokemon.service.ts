@@ -16,20 +16,24 @@ export class PokemonService {
     @InjectModel(Pokemon.name) private readonly pokemonModel: Model<Pokemon>,
   ) {}
 
+  private handleExeptions(error: any, method: 'create' | 'update'): void {
+    if (error.code === 11000)
+      throw new BadRequestException(
+        `Pokemon exists in db ${JSON.stringify(error.keyValue)}`,
+      );
+    console.log(error);
+    throw new InternalServerErrorException(
+      `Can't ${method} pokemon - check server logs`,
+    );
+  }
+
   async create(createPokemonDto: CreatePokemonDto) {
     try {
       createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase();
       const pokemon = await this.pokemonModel.create(createPokemonDto);
       return pokemon;
     } catch (error) {
-      if (error.code === 11000)
-        throw new BadRequestException(
-          `Pokemon exists in db ${JSON.stringify(error.keyValue)}`,
-        );
-      console.log(error);
-      throw new InternalServerErrorException(
-        "Can't create pokemon - check server logs",
-      );
+      this.handleExeptions(error, 'create');
     }
   }
 
@@ -53,8 +57,16 @@ export class PokemonService {
     return pokemon;
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return `This action updates a #${id} pokemon`;
+  async update(param: string, updatePokemonDto: UpdatePokemonDto) {
+    const pokemon = await this.findOne(param);
+    const name = updatePokemonDto.name;
+    if (name) updatePokemonDto.name = name.toLocaleLowerCase();
+    try {
+      await pokemon.updateOne(updatePokemonDto, { new: true });
+      return { ...pokemon.toJSON(), ...updatePokemonDto };
+    } catch (error) {
+      this.handleExeptions(error, 'update');
+    }
   }
 
   remove(id: number) {
