@@ -10,6 +10,7 @@ import { Pokemon } from './entities/pokemon.entity';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { IPokeEntity } from './interfaces/poke-entity.interface';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
@@ -38,8 +39,9 @@ export class PokemonService {
     }
   }
 
-  findAll() {
-    return this.pokemonModel.find();
+  findAll(queryParams: PaginationDto) {
+    const { limit = 10, offset = 0 } = queryParams;
+    return this.pokemonModel.find().limit(limit).skip(offset);
   }
 
   async findOne(param: string) {
