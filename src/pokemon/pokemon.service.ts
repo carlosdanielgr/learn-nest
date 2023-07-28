@@ -9,6 +9,7 @@ import { Model, isValidObjectId } from 'mongoose';
 import { Pokemon } from './entities/pokemon.entity';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { IPokeEntity } from './interfaces/poke-entity.interface';
 
 @Injectable()
 export class PokemonService {
@@ -74,5 +75,17 @@ export class PokemonService {
     if (deletedCount === 0)
       throw new BadRequestException(`Pokemon with id ${id} not found`);
     return `This action removes a #${id} pokemon`;
+  }
+
+  async deleteMany() {
+    await this.pokemonModel.deleteMany({});
+  }
+
+  async insertMany(many: IPokeEntity[]) {
+    try {
+      await this.pokemonModel.insertMany(many);
+    } catch (error) {
+      this.handleExeptions(error, 'create');
+    }
   }
 }
