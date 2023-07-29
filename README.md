@@ -30,3 +30,13 @@ npm i -g @nestjs/cli
 ```
 docker-compose up -d
 ```
+
+# Run build
+
+```
+docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build
+```
+
+```
+docker-compose -f docker-compose.prod.yaml --env-file .env.prod up -d
+```
