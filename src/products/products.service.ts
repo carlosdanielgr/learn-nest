@@ -46,11 +46,16 @@ export class ProductsService {
   async findOne(param: string) {
     try {
       let product!: Product;
-      const getProduct = async (key: 'id' | 'slug') => {
-        return await this.productRepository.findOneBy({ [key]: param });
-      };
-      if (isUUID(param)) product = await getProduct('id');
-      else product = await getProduct('slug');
+      if (isUUID(param))
+        product = await this.productRepository.findOneBy({ id: param });
+      else {
+        const queryBuilder = this.productRepository.createQueryBuilder();
+        product = await queryBuilder
+          .where('slug =:slug', {
+            slug: param,
+          })
+          .getOne();
+      }
       return product;
     } catch (error) {
       this.handleError(error);
