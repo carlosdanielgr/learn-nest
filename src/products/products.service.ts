@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -62,8 +63,19 @@ export class ProductsService {
     }
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const preProduct = await this.productRepository.preload({
+      id,
+      ...updateProductDto,
+    });
+    if (!preProduct)
+      throw new NotFoundException(`Product with id:${id} not found`);
+    try {
+      const product = await this.productRepository.save(preProduct);
+      return product;
+    } catch (error) {
+      this.handleError(error);
+    }
   }
 
   async remove(id: string) {
